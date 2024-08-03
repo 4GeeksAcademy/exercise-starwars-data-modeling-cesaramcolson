@@ -20,17 +20,35 @@ class Character(Base):
     name = Column(String(250), nullable=False)
     description = Column(String(250))
 
+    descriptions = relationship("Description", back_populates="character")
+
 class Planet(Base):
     __tablename__ = 'planet'
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
     description = Column(String(250))
 
+    descriptions = relationship("Description", back_populates="planet")
+
 class Vehicle(Base):
     __tablename__ = 'vehicle'
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
     description = Column(String(250))
+
+    descriptions = relationship("Description", back_populates="vehicle")
+
+class Description(Base):
+    __tablename__ = 'description'
+    id = Column(Integer, primary_key=True)
+    character_id = Column(Integer, ForeignKey('character.id'), nullable=True)
+    planet_id = Column(Integer, ForeignKey('planet.id'), nullable=True)
+    vehicle_id = Column(Integer, ForeignKey('vehicle.id'), nullable=True)
+    attributes = Column(String(500), nullable=False)
+
+    character = relationship("Character", back_populates="descriptions")
+    planet = relationship("Planet", back_populates="descriptions")
+    vehicle = relationship("Vehicle", back_populates="descriptions")
 
 class Favorite(Base):
     __tablename__ = 'favorite'
@@ -48,7 +66,7 @@ class Favorite(Base):
 User.favorites = relationship("Favorite", order_by=Favorite.id, back_populates="user")
 
 def to_dict(self):
-        return {}
+    return {}
 
 ## Draw from SQLAlchemy base
 render_er(Base, 'diagram.png')
